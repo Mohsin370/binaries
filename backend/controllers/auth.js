@@ -84,6 +84,8 @@ const updateUserEmailVerification = async(token) => {
     });
 };
 
+
+//verification email URL request to verify token and mark user as verified
 const verifyEmailToken = async(req, res) => {
     try {
         const user = await User.findOne({
@@ -184,7 +186,6 @@ const sendResponse = (res, success, message, data = {}) => {
 };
 
 const handleError = (err, res) => {
-    console.log("here");
     sendResponse(res, false, "Error Reading request");
     console.error(err);
 };
