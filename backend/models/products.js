@@ -11,10 +11,25 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Products.belongsTo(models.InvoiceItems,{
+                foreignKey:"id"
+            })
         }
     }
     Products.init({
-        name: DataTypes.STRING,
+        name: {
+            type:DataTypes.STRING,
+        },
+        specification: {
+            type: DataTypes.STRING,
+        },
+        model_name:{
+            type: DataTypes.STRING,
+        },
+        category:{
+            type:DataTypes.STRING
+        },
+
         description: DataTypes.STRING,
         created_by: {
             type: DataTypes.UUIDV4,

@@ -8,7 +8,7 @@ module.exports = {
             createdAt: new Date(),
             updatedAt: new Date()
         }, {
-            permission_name: 'EDIT_PRODUCT',
+            permission_name: 'UPDATE_PRODUCT',
             createdAt: new Date(),
             updatedAt: new Date()
         }, {
@@ -17,6 +17,38 @@ module.exports = {
             updatedAt: new Date()
         }, {
             permission_name: 'CREATE_PRODUCT',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'VIEW_ORDER',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'CREATE_ORDER',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'UPDATE_ORDER',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'DELETE_ORDER',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'VIEW_INVOICE',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'CREATE_INVOICE',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'UPDATE_INVOICE',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }, {
+            permission_name: 'DELETE_INVOICE',
             createdAt: new Date(),
             updatedAt: new Date()
         }], {});

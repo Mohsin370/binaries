@@ -4,6 +4,8 @@ const PORT = process.env.PORT || 5000;;
 const { sequelize } = require("./models");
 // const auth = require('./routes/authentication/auth_route');
 const routes = require('./routes/routes');
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./docs');
 
 
 app.use(express.json({ limit: '50mb' }));
@@ -29,6 +31,9 @@ app.use(function(req, res, next) {
     next();
 });
 
+// app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 app.get('/', (req, res) => {
     res.send('Test api call works!')
 })
@@ -42,9 +47,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 
 app.listen(PORT, async() => {
-    console.log(process.env.PORT)
     await sequelize.authenticate().then((res) => {
-        console.log("Authenticated");
         console.log("Server connected at port: ", PORT);
     });
 });

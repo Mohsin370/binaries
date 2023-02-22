@@ -22,6 +22,10 @@ const checkExistingUser = async(email) => {
         where: {
             email,
         },
+        include:{
+            association:'Roles',
+            attributes:['id']
+        }
     });
     if (existingUser.length > 0) {
         return existingUser;
@@ -117,7 +121,7 @@ const login = async(req, res) => {
             );
 
             if (isValidPassword && existingUser[0].isEmail_verified) {
-                var token = generateToken(email); //sign token using email
+                var token = generateToken({email,id:existingUser[0].id, role_id:existingUser[0].Roles[0].id}); //sign token using email
                 const data = {
                     token,
                     email,

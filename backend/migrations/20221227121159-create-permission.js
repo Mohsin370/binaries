@@ -13,14 +13,14 @@ module.exports = {
                 type: Sequelize.STRING,
                 unique: true,
             },
-            role_id: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: 'Roles',
-                    key: 'id',
-                    type: 'Foreign Key'
-                }
-            },
+            // role_id: {
+            //     type: Sequelize.INTEGER,
+            //     references: {
+            //         model: 'Roles',
+            //         key: 'id',
+            //         type: 'Foreign Key'
+            //     }
+            // },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
