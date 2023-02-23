@@ -12,9 +12,13 @@ const signupSchema = Joi.object({
     role_id: Joi.number().max(35).required(),
 });
 
+const forgotPasswordSchema = Joi.object({
+    email: Joi.string().email().min(5).max(30).required(),
+});
 
 
 module.exports = {
     loginSchema,
-    signupSchema
+    signupSchema,
+    forgotPasswordSchema
 }
