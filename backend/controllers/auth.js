@@ -34,7 +34,8 @@ const checkExistingUser = async (email) => {
   return false;
 };
 
-const sendVerificationEmail = (mailOptions) => {
+const sendVerificationEmail = async (mailOptions) => {
+  const emailRespons = false;
   let transporter = nodemailer.createTransport({
     host: "smtp.outlook.com",
     port: 587,
@@ -45,10 +46,12 @@ const sendVerificationEmail = (mailOptions) => {
     },
   });
 
-  transporter.sendMail(mailOptions, (error, info) => {
+  const resp = await transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
+      emailRespons = false;
       console.log(error);
     } else {
+      emailRespons = true;
       console.log("Email sent: " + info.response);
     }
   });
@@ -197,14 +200,6 @@ const forgotPassword = async (req, res) => {
     }
     const user = existingUser[0];
     const verification_token = generateToken(email);
-    // const user = await User.findOne({
-    //   where: {
-    //     email,
-    //   },
-    // });
-    console.log("============================");
-    console.log(user);
-    console.log("============================");
     if (!user) {
       res.send({
         message: "user not found",
@@ -227,8 +222,9 @@ const forgotPassword = async (req, res) => {
     if (sendEmail) {
       sendResponse(res, true, `Email sent to ${user.email}`);
       return;
-    } else {
-      sendResponse(res, false, `Unable to send Email sent to ${user.email}`);
+    } else if (!sendEmail) {
+      console.log(sendEmail);
+      sendResponse(res, false, `Unable to send email to ${user.email}`);
     }
   } catch (err) {
     console.log(err);
