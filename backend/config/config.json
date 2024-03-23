@@ -19,5 +19,12 @@
         "database": "binaries",
         "host": "localhost",
         "dialect": "postgres"
+    },
+    "docker": {
+        "username": "postgres",
+        "password": "admin",
+        "database": "binaries",
+        "host": "localhost",
+        "dialect": "postgres"
     }
 }
