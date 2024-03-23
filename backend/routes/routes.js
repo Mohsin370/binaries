@@ -8,7 +8,16 @@ const products = require("./product/product_route");
 const invoice = require("./order/invoice_route");
 const invoice_item = require("./order/invoice_item_route");
 const order = require("./order/order_route");
-
+/**
+ * @swagger
+ * /auth:
+ *   get:
+ *     summary: Test endpoint
+ *     description: Endpoint for testing purposes
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ */
 app.use("/auth", auth);
 app.use("/role", role);
 app.use("/user", user);

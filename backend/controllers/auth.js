@@ -178,7 +178,7 @@ const signup = async (req, res) => {
         to: email,
         subject: "Email Verification",
         html: `<p>Welcome to Binnaries! <br>
-                        <a href="http://${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
+                        <a href="${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
                         Please click this link to verify your email.</a></p>`,
       };
 
@@ -215,7 +215,7 @@ const forgotPassword = async (req, res) => {
       to: email,
       subject: "Forgot Password for Binaries",
       html: `<p>Update Password!<br>
-                        <a href="http://${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
+                        <a href="${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
                         Please click this link to verify your email.</a></p>`,
     };
     const sendEmail = await sendVerificationEmail(mailOptions);
