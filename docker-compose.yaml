@@ -6,7 +6,7 @@ services:
     networks:
       - binaries-app
     ports:
-      - '5174:5174'
+      - '5173:5173'
     stdin_open: true
     tty: true
   backend:
@@ -17,17 +17,19 @@ services:
     ports:
       - '5000:5000'
     environment:
-      - BACKEND_URL:http://localhost:5000
-      - PORT:5000
-      - JWT_SECRET_KEY=vfgbdh%^2DSw@
-      - BINARIES_EMAIL=mohsinrock4u2@hotmail.com
-      - BINARIES_PASSWORD=Mohsin1?
-      - PG_USER=postgres
-      - PG_PASSWORD=admin
-      - PG_DB=binaries
-      - PG_HOST=pg-database
+      - BACKEND_URL:${BACKEND_URL}
+      - PORT:${PORT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - BINARIES_EMAIL=${BINARIES_EMAIL}
+      - BINARIES_PASSWORD=${BINARIES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=pg-database
     networks:
       - binaries-app
+    volumes:
+      - ./backend:/app/backend
   pg-database:
     image: postgres
     ports:
@@ -36,10 +38,9 @@ services:
       - binaries-app
     restart: always
     environment:
-      - PG_USER=postgres
-      - PG_PASSWORD=admin
-      - PG_DB=binaries
-      - PG_HOST=PG_HOST
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 networks:
   binaries-app:
     driver: bridge
