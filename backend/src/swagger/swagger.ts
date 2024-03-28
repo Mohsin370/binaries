@@ -1,8 +1,9 @@
 const swaggerUi = require("swagger-ui-express");
-const swaggerJsDoc = require("swagger-jsdoc");
+import swaggerJsDoc, { Options } from "swagger-jsdoc";
+import { Express } from "express";
 require("dotenv").config();
 
-const options = {
+const options: Options = {
   definition: {
     openapi: "3.0.0",
     info: {
@@ -17,8 +18,9 @@ const options = {
 const swaggerSpec = swaggerJsDoc(options);
 
 //swagger setup initialization
-const swaggerDocSetup = (app) => {
+const swaggerDocSetup = (app: Express) => {
   app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 };
 
-module.exports = swaggerDocSetup;
+
+export default swaggerDocSetup;

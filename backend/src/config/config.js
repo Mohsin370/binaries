@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const sequelizeConfig = {
     development: {
       username: process.env.POSTGRES_USER,
