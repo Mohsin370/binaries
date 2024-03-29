@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 // const nodemailer = require("nodemailer");
 import nodemailer from "nodemailer";
 const { encryptPassword } = require("../helper/authHelper");
-import User from "../interfaces/user.interface";
+import  UserType from "../interfaces/user.interface";
 import { sequelize } from "../models";
 import { Transaction } from "sequelize";
 
@@ -112,7 +112,7 @@ const verifyEmailToken = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body.data;
-    const existingUser: User[] = await checkExistingUser(email);
+    const existingUser: UserType[] = await checkExistingUser(email);
     if (existingUser) {
       //password verification
       const isValidPassword = bcrypt.compareSync(
@@ -161,7 +161,7 @@ const signup = async (req: Request, res: Response) => {
     const verification_token = generateToken(email);
 
     await sequelize.transaction(async (t: Transaction) => {  //user should not be created if the role is missing or failed to be created
-      const newUser: User = await User.create(
+      const newUser: UserType = await User.create(
         {
           name,
           email,
