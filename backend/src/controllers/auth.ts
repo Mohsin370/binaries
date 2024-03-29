@@ -1,24 +1,28 @@
+import { Request, Response } from "express";
 var jwt = require("jsonwebtoken");
 const { User, Role, UserRole } = require("../models");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 const { encryptPassword } = require("../helper/authHelper");
+import User from "../interfaces/user.interface";
+import { sequelize } from "../models";
+import { Transaction } from "sequelize";
 
-// const encryptPassword = async (Password) => {
-//   let promise = new Promise((res, rej) => {
-//     let saltRounds = 10;
-//     bcrypt.genSalt(saltRounds, function (err, salt) {
-//       bcrypt.hash(Password, salt, function (err, hash) {
-//         res(hash);
-//       });
-//     });
-//   });
-//   return promise.then((res) => {
-//     return res;
-//   });
-// };
+interface tokenData {
+  email: string;
+  id: string;
+  role_id: number;
+}
 
-const checkExistingUser = async (email) => {
+interface mailOptions {
+  from: string | undefined;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+const checkExistingUser = async (email: string) => {
   const existingUser = await User.findAll({
     where: {
       email,
@@ -34,10 +38,10 @@ const checkExistingUser = async (email) => {
   return false;
 };
 
-const sendVerificationEmail = async (mailOptions) => {
-  const emailRespons = false;
+const sendVerificationEmail = async (mailOptions: mailOptions) => {
+
   let transporter = nodemailer.createTransport({
-    host: "smtp.outlook.com",
+    host: 'smtp-mail.outlook.com',
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
@@ -46,22 +50,21 @@ const sendVerificationEmail = async (mailOptions) => {
     },
   });
 
-  const resp = await transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      emailRespons = false;
-      console.log(error);
-    } else {
-      emailRespons = true;
-      console.log("Email sent: " + info.response);
-    }
-  });
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
+    return true;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return false;
+  }
 };
 
-const generateToken = (data) => {
+const generateToken = (data: tokenData | string) => {
   return jwt.sign(data, process.env.JWT_SECRET_KEY);
 };
 
-const checkExistingRole = async (id) => {
+const checkExistingRole = async (id: number) => {
   const role = await Role.findOne({
     where: {
       id,
@@ -73,7 +76,7 @@ const checkExistingRole = async (id) => {
   return false;
 };
 
-const updateUserEmailVerification = async (token) => {
+const updateUserEmailVerification = async (token: string) => {
   return await User.update(
     {
       isEmail_verified: true,
@@ -87,7 +90,7 @@ const updateUserEmailVerification = async (token) => {
 };
 
 //verification email URL request to verify token and mark user as verified
-const verifyEmailToken = async (req, res) => {
+const verifyEmailToken = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({
       where: {
@@ -106,10 +109,10 @@ const verifyEmailToken = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body.data;
-    const existingUser = await checkExistingUser(email);
+    const existingUser: User[] = await checkExistingUser(email);
     if (existingUser) {
       //password verification
       const isValidPassword = bcrypt.compareSync(
@@ -140,7 +143,7 @@ const login = async (req, res) => {
   }
 };
 
-const signup = async (req, res) => {
+const signup = async (req: Request, res: Response) => {
   try {
     const { email, name, password, role_id } = req.body.data;
     const existingUser = await checkExistingUser(email);
@@ -157,40 +160,48 @@ const signup = async (req, res) => {
     }
     const verification_token = generateToken(email);
 
-    const newUser = await User.create({
-      name,
-      email,
-      password: encryptedPassword,
-      verification_token,
-    });
+    await sequelize.transaction(async (t: Transaction) => {  //user should not be created if the role is missing or failed to be created
+      const newUser: User = await User.create(
+        {
+          name,
+          email,
+          password: encryptedPassword,
+          verification_token,
+        },
+        { transaction: t }
+      );
 
-    if (newUser) {
-      const userRole = await UserRole.create({
-        user_id: newUser.id,
-        role_id,
-      });
-      if (!userRole) {
-        console.log("UserRole was not created");
+      if (newUser) {
+        const userRole = await UserRole.create(
+          {
+            user_id: newUser.id,
+            role_id,
+          },
+          { transaction: t }
+        );
+        if (!userRole) {
+          console.log("UserRole was not created");
+        }
+
+        const mailOptions = {
+          from: process.env.BINARIES_EMAIL,
+          to: email,
+          subject: "Email Verification",
+          html: `<p>Welcome to Binnaries! <br>
+                          <a href="${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
+                          Please click this link to verify your email.</a></p>`,
+        };
+
+        await sendVerificationEmail(mailOptions);
+        sendResponse(res, true, "User Created Successfully");
       }
-
-      const mailOptions = {
-        from: process.env.BINARIES_EMAIL,
-        to: email,
-        subject: "Email Verification",
-        html: `<p>Welcome to Binnaries! <br>
-                        <a href="${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
-                        Please click this link to verify your email.</a></p>`,
-      };
-
-      sendVerificationEmail(mailOptions);
-      sendResponse(res, true, "User Created Successfully");
-    }
+    });
   } catch (err) {
     handleError(err, res);
   }
 };
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body.data;
     const existingUser = await checkExistingUser(email);
@@ -218,12 +229,11 @@ const forgotPassword = async (req, res) => {
                         <a href="${process.env.BACKEND_URL}/api/auth/verify/${verification_token}">
                         Please click this link to verify your email.</a></p>`,
     };
-    const sendEmail = await sendVerificationEmail(mailOptions);
+    const sendEmail: boolean = await sendVerificationEmail(mailOptions);
     if (sendEmail) {
       sendResponse(res, true, `Email sent to ${user.email}`);
       return;
     } else if (!sendEmail) {
-      console.log(sendEmail);
       sendResponse(res, false, `Unable to send email to ${user.email}`);
     }
   } catch (err) {
@@ -232,7 +242,12 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const sendResponse = (res, success, message, data = {}) => {
+const sendResponse = (
+  res: Response,
+  success: boolean,
+  message: string,
+  data: Record<string, any> = {}
+) => {
   res.send({
     success,
     message,
@@ -240,14 +255,9 @@ const sendResponse = (res, success, message, data = {}) => {
   });
 };
 
-const handleError = (err, res) => {
-  sendResponse(res, false, "Error Reading request");
+const handleError = (err: any, res: Response) => {
+  sendResponse(res, false, "Error Reading request", err);
   console.error(err);
 };
 
-module.exports = {
-  login,
-  signup,
-  verifyEmailToken,
-  forgotPassword,
-};
+export { login, signup, verifyEmailToken, forgotPassword };

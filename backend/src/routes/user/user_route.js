@@ -10,4 +10,6 @@ router.put(
   userController.changePassword
 );
 
+//should add delete route
+
 module.exports = router;

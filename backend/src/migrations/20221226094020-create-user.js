@@ -28,7 +28,8 @@ module.exports = {
                 unique: true,
             },
             isEmail_verified: {
-                type: Sequelize.STRING,
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
             },
             createdAt: {
                 allowNull: false,
