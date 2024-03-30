@@ -1,9 +1,10 @@
 const { Role } = require('../models');
+import { Request, Response } from "express";
 
 
-const createRole = async(req, res) => {
+const createRole = async(req: Request, res: Response) => {
 
-    const role_name = req.body.data.role_name;
+    const role_name: string = req.body.data.role_name;
     const role = await Role.create({
         role_name,
     });
@@ -16,6 +17,6 @@ const createRole = async(req, res) => {
 
 
 
-module.exports = {
+export {
     createRole
 };

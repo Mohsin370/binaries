@@ -1,7 +1,12 @@
+import { Request, Response, NextFunction } from "express";
 const authHelper = require("../helper/authHelper");
 const { Role, Permission } = require("../models");
 
-const authorizeMiddleware = async (req, res, next) => {
+const authorizeMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.header("token");
   if (token == null) {
     res.status(403).send({
@@ -13,14 +18,8 @@ const authorizeMiddleware = async (req, res, next) => {
 
   const user = await authHelper.tokenVerification(token);
   if (user) {
-    // if (user.role_id != req.params.role_id) {
-    //   res.status(401).send({
-    //     success: false,
-    //     message: "Invalid Role",
-    //   });
-    //   return;
-    // }
-
+    //pass the email to the next function
+    res.locals.user = user;
     next();
   } else {
     res.status(401).send({
@@ -30,22 +29,22 @@ const authorizeMiddleware = async (req, res, next) => {
   }
 };
 
-const getRole = async (role_id) => {
-  const role = await Role.findByPk(role_id);
-  if (role) {
-    return role;
+const getRole = async (role_id: number) => {
+  try {
+    return await Role.findByPk(role_id);
+  } catch (error) {
+    throw new Error("Unable to find the role");
   }
-  return false;
 };
 
-const authPermission = (requestedPermission) => {
-  return async (req, res, next) => {
+const authPermission = (requestedPermission: string) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token = req.header("token");
       const { role_id } = await authHelper.tokenVerification(token);
       const { role_name } = await getRole(role_id);
 
-      if (role_name == "ADMIN") {
+      if (role_name == "admin") {
         next();
         return;
       }
@@ -60,7 +59,9 @@ const authPermission = (requestedPermission) => {
         ],
       });
 
-      if (permissions.find((el) => el.permission_name == requestedPermission)) {
+      if (
+        permissions.find((el: any) => el.permission_name == requestedPermission)
+      ) {
         next();
         return;
       } else {
@@ -80,7 +81,4 @@ const authPermission = (requestedPermission) => {
   };
 };
 
-module.exports = {
-  authorizeMiddleware,
-  authPermission,
-};
+export { authorizeMiddleware, authPermission };
