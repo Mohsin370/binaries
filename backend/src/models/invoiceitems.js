@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
+      // Note: invoice items has many products??
     }
   }
   InvoiceItems.init(
