@@ -7,6 +7,7 @@ import products from "./product/product_route";
 import invoice from "./order/invoice_route";
 import invoice_item from "./order/invoice_item_route";
 import order from "./order/order_route";
+import permission from "./permission/permission_route";
 /**
  * @swagger
  * /auth:
@@ -24,5 +25,6 @@ app.use("/product", products);
 app.use("/order", order);
 app.use("/invoice", invoice);
 app.use("/invoiceItem", invoice_item);
+app.use("/permission", permission);
 
 export default app;

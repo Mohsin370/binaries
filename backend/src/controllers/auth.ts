@@ -9,19 +9,9 @@ import UserType from "../interfaces/user.interface";
 import { sequelize } from "../models";
 import { Transaction } from "sequelize";
 import { verifyPassword } from "../helper/authHelper";
+import { mailOptions, tokenData } from "../interfaces/auth.interface";
 
-interface tokenData {
-  email: string;
-  id: string;
-  role_id: number;
-}
 
-interface mailOptions {
-  from: string | undefined;
-  to: string;
-  subject: string;
-  html: string;
-}
 
 const checkExistingUser = async (email: string) => {
   const existingUser = await User.findAll({

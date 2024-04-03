@@ -6,11 +6,11 @@ import {
   createProduct,
   deleteProduct,
 } from "../../controllers/product";
-import { authorizeMiddleware } from "../../middlewares/auth_middlware";
+import { authPermission, authorizeMiddleware } from "../../middlewares/auth_middlware";
 
-router.get("/:user_id",authorizeMiddleware, getProducts);
-router.post("/", authorizeMiddleware, createProduct);
-router.put("/",authorizeMiddleware, updateProduct);
-router.delete("/",authorizeMiddleware, deleteProduct);
+router.get("/:user_id",authorizeMiddleware,authPermission("VIEW_PRODUCT"), getProducts);
+router.post("/", authorizeMiddleware,authPermission("CREATE_PRODUCT"), createProduct);
+router.put("/",authorizeMiddleware,authPermission("UPDATE_PRODUCT"), updateProduct);
+router.delete("/",authorizeMiddleware,authPermission("DELETE_PRODUCT"), deleteProduct);
 
 export default router;
