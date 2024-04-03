@@ -17,6 +17,15 @@ module.exports = {
                     type: "Foreign Key",
                 },
             },
+            specification:{
+                type: Sequelize.STRING
+            },
+            model_name:{
+                type: Sequelize.STRING
+            },
+            category:{
+                type: Sequelize.STRING
+            },
             name: {
                 type: Sequelize.STRING
             },
