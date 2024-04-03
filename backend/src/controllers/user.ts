@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 const { User } = require("../models");
-import { tokenVerification, encryptPassword } from "../helper/authHelper";
+import { encryptPassword, verifyPassword } from "../helper/authHelper";
 import UserInterface from "../interfaces/user.interface";
 
 //Note: needs to be added pagination if getting all the user
@@ -26,8 +26,7 @@ const changePassword = async (req: Request, res: Response) => {
   try {
     const { password, newPassword } = req.body.data;
     // const token = req.header("token");
-    const {email} = res.locals.user;
-    console.log(email)
+    const { email } = res.locals.user;
     if (!email) {
       res.status(401).send({
         success: false,
@@ -41,7 +40,16 @@ const changePassword = async (req: Request, res: Response) => {
       },
     });
 
-    //NOTE: verify current password here AND Then change the password
+
+    const isMatch: boolean = await verifyPassword(password, user[0].password);
+
+    if(!isMatch){
+      res.status(403).send({
+        success: false,
+        message: "Current password is inavlid"
+      });
+      return;
+    }
 
     const encryptedPassword: string = await encryptPassword(newPassword);
     user.update({

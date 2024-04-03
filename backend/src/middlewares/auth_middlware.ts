@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-const authHelper = require("../helper/authHelper");
-const { Role, Permission } = require("../models");
+import { tokenVerification } from "../helper/authHelper";
+const { Permission } = require("../models");
 
 const authorizeMiddleware = async (
   req: Request,
@@ -16,9 +16,9 @@ const authorizeMiddleware = async (
     return;
   }
 
-  const user = await authHelper.tokenVerification(token);
+  const user = await tokenVerification(token);
   if (user) {
-    //pass the email to the next function
+    //store userData in request
     res.locals.user = user;
     next();
   } else {
@@ -29,22 +29,13 @@ const authorizeMiddleware = async (
   }
 };
 
-const getRole = async (role_id: number) => {
-  try {
-    return await Role.findByPk(role_id);
-  } catch (error) {
-    throw new Error("Unable to find the role");
-  }
-};
-
 const authPermission = (requestedPermission: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.header("token");
-      const { role_id } = await authHelper.tokenVerification(token);
-      const { role_name } = await getRole(role_id);
+      const { role_id } = res.locals.user;
 
-      if (role_name == "admin") {
+      if (role_id == 1) {
+        //role_id 1 should always be admin or sysadmin etc
         next();
         return;
       }
@@ -65,7 +56,7 @@ const authPermission = (requestedPermission: string) => {
         next();
         return;
       } else {
-        res.send({
+        res.status(403).send({
           success: false,
           message: "Permission denied",
         });
