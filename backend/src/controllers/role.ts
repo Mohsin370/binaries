@@ -1,5 +1,5 @@
 const { Role } = require("../models");
-import { Request, Response, response } from "express";
+import { Request, Response } from "express";
 import RoleType from "../interfaces/role.interface";
 
 const createRole = async (req: Request, res: Response) => {
