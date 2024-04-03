@@ -5,9 +5,10 @@ const bcrypt = require("bcrypt");
 // const nodemailer = require("nodemailer");
 import nodemailer from "nodemailer";
 const { encryptPassword } = require("../helper/authHelper");
-import  UserType from "../interfaces/user.interface";
+import UserType from "../interfaces/user.interface";
 import { sequelize } from "../models";
 import { Transaction } from "sequelize";
+import { verifyPassword } from "../helper/authHelper";
 
 interface tokenData {
   email: string;
@@ -39,9 +40,8 @@ const checkExistingUser = async (email: string) => {
 };
 
 const sendVerificationEmail = async (mailOptions: mailOptions) => {
-
   let transporter = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com',
+    host: "smtp-mail.outlook.com",
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
@@ -115,10 +115,7 @@ const login = async (req: Request, res: Response) => {
     const existingUser: UserType[] = await checkExistingUser(email);
     if (existingUser) {
       //password verification
-      const isValidPassword = bcrypt.compareSync(
-        password,
-        existingUser[0].password
-      );
+      const isValidPassword: boolean = await verifyPassword(password, existingUser[0].password);
 
       if (isValidPassword && existingUser[0].isEmail_verified) {
         var token = generateToken({
@@ -160,7 +157,8 @@ const signup = async (req: Request, res: Response) => {
     }
     const verification_token = generateToken(email);
 
-    await sequelize.transaction(async (t: Transaction) => {  //user should not be created if the role is missing or failed to be created
+    await sequelize.transaction(async (t: Transaction) => {
+      //user should not be created if the role is missing or failed to be created
       const newUser: UserType = await User.create(
         {
           name,
