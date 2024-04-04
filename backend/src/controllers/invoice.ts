@@ -1,33 +1,46 @@
 const { Invoice } = require("../models");
 const handleResponse = require("../helper/errorHandling");
+import { Request, Response } from "express";
 
-const getInvoice = async (req, res) => {
+const getInvoice = async (req: Request, res: Response) => {
   try {
     const order_id = req.params.order_id;
     const invoices = await Invoice.findAll({
-      where:{
-        order_id
-      }
+      where: {
+        order_id,
+      },
     });
-    handleResponse.handleSuccessResponse(invoices, res, "Invoice fetched successfully");
+    handleResponse.handleSuccessResponse(
+      invoices,
+      res,
+      "Invoice fetched successfully"
+    );
   } catch (err) {
     console.log(err);
-    handleResponse.handleErrorResponse(err, res, "Unable to fetch the invoices");
+    handleResponse.handleErrorResponse(
+      err,
+      res,
+      "Unable to fetch the invoices"
+    );
   }
 };
 
-const createInvoice = async (req, res) => {
+const createInvoice = async (req: Request, res: Response) => {
   try {
     const invoice_data = req.body.data;
     const invoices = await Invoice.create(invoice_data);
     handleResponse.handleSuccessResponse(invoices, res, "Invoice created");
   } catch (err) {
     console.log(err);
-    handleResponse.handleErrorResponse(err, res, "Unable to create the Invoice");
+    handleResponse.handleErrorResponse(
+      err,
+      res,
+      "Unable to create the Invoice"
+    );
   }
 };
 
-const updateInvoice = async (req, res) => {
+const updateInvoice = async (req: Request, res: Response) => {
   try {
     const invoice_data = req.body.data;
     const invoice_id = req.params.id;
@@ -51,10 +64,10 @@ const updateInvoice = async (req, res) => {
   }
 };
 
-const deleteInvoice = async (req, res) => {
+const deleteInvoice = async (req: Request, res: Response) => {
   try {
     const invoice = await Invoice.findByPk(req.params.id);
-    if(!invoice){
+    if (!invoice) {
       handleResponse.handleErrorResponse("Error", res, "Invoice not found!");
       return;
     }
@@ -66,13 +79,12 @@ const deleteInvoice = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    handleResponse.handleErrorResponse(err, res, "Unable to delete the Invoice");
+    handleResponse.handleErrorResponse(
+      err,
+      res,
+      "Unable to delete the Invoice"
+    );
   }
 };
 
-module.exports = {
-  createInvoice,
-  updateInvoice,
-  deleteInvoice,
-  getInvoice,
-};
+export { createInvoice, updateInvoice, deleteInvoice, getInvoice };

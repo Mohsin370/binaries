@@ -1,4 +1,4 @@
-const Joi = require("@hapi/joi");
+import Joi from "joi";
 
 const getOrderSchema = Joi.object({
   user_id: Joi.string().uuid().required(),
@@ -21,11 +21,10 @@ const updateOrderSchema = Joi.object({
 });
 
 const deleteOrderSchema = Joi.object({
-  // user_id: Joi.string().uuid().required(),
   id: Joi.number().required(),
 });
 
-module.exports = {
+export {
   getOrderSchema,
   createOrderSchema,
   updateOrderSchema,

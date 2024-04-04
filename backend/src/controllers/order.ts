@@ -1,7 +1,8 @@
+import { Request, Response } from "express";
 const { Orders } = require("../models");
 const handleResponse = require("../helper/errorHandling");
 
-const getOrders = async (req, res) => {
+const getOrders = async (req: Request, res: Response) => {
   try {
     const user_id = req.params.user_id;
     const orders = await Orders.findAll({
@@ -20,7 +21,7 @@ const getOrders = async (req, res) => {
   }
 };
 
-const createOrders = async (req, res) => {
+const createOrders = async (req: Request, res: Response) => {
   try {
     const newOrder = await Orders.create(req.body.data);
     handleResponse.handleSuccessResponse(newOrder, res, "Order created");
@@ -29,9 +30,9 @@ const createOrders = async (req, res) => {
   }
 };
 
-const updateOrders = (req, res) => {};
+const updateOrders = (req: Request, res: Response) => {};
 
-const deleteOrders = async (req, res) => {
+const deleteOrders = async (req: Request, res: Response) => {
   try {
     const order = await Orders.findByPk(req.params.id);
     if (!order) {
@@ -50,7 +51,7 @@ const deleteOrders = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createOrders,
   updateOrders,
   deleteOrders,

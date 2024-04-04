@@ -1,4 +1,4 @@
-const Joi = require("@hapi/joi");
+import Joi from "joi";
 
 const getInvoiceItemSchema = Joi.object({
   invoice_id: Joi.number().required(),
@@ -26,7 +26,7 @@ const deleteInvoiceItemSchema = Joi.object({
   id: Joi.number().required(),
 });
 
-module.exports = {
+export {
   getInvoiceItemSchema,
   createInvoiceItemSchema,
   updateInvoiceItemSchema,

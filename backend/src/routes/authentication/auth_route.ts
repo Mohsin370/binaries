@@ -6,15 +6,15 @@ import {
   verifyEmailToken,
   forgotPassword,
 } from "../../controllers/auth";
-import authValidator from "../../validators/authValidator";
+import {
+  loginValidation,
+  signupValidation,
+  forgotPasswordValidation,
+} from "../../validators/authValidator";
 
 router.get("/verify/:token", verifyEmailToken);
-router.post("/", authValidator.loginValidation, login);
-router.put("/", authValidator.signupValidation, signup);
-router.put(
-  "/forgotPassword",
-  authValidator.forgotPasswordValidation,
-  forgotPassword
-);
+router.post("/", loginValidation, login);
+router.put("/", signupValidation, signup);
+router.put("/forgotPassword", forgotPasswordValidation, forgotPassword);
 
 export default router;

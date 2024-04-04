@@ -1,6 +1,7 @@
 const { InvoiceItems } = require("../models");
+import { Request, Response } from "express";
 
-const getInvoiceItems = async (req, res) => {
+const getInvoiceItems = async (req: Request, res: Response) => {
   try {
     const invoice_items = await InvoiceItems.findAll({
       where: {
@@ -22,7 +23,7 @@ const getInvoiceItems = async (req, res) => {
   }
 };
 
-const createInvoiceItems = async (req, res) => {
+const createInvoiceItems = async (req: Request, res: Response) => {
   try {
     const invoice_item_data = req.body.data;
     const invoice_item = await InvoiceItems.create(invoice_item_data);
@@ -41,7 +42,7 @@ const createInvoiceItems = async (req, res) => {
   }
 };
 
-const updateInvoiceItems = async (req, res) => {
+const updateInvoiceItems = async (req: Request, res: Response) => {
   try {
     const invoice_item_data = req.body.data;
     const invoice_item_id = req.params.id;
@@ -65,7 +66,7 @@ const updateInvoiceItems = async (req, res) => {
   }
 };
 
-const deleteInvoiceItems = async (req, res) => {
+const deleteInvoiceItems = async (req: Request, res: Response) => {
   try {
     await InvoiceItems.delete(req.params.id);
     res.send({
@@ -82,7 +83,7 @@ const deleteInvoiceItems = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createInvoiceItems,
   updateInvoiceItems,
   deleteInvoiceItems,

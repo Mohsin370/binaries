@@ -101,7 +101,8 @@ const verifyEmailToken = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body.data;
+    let { email, password } = req.body.data;
+    email = email.toLowerCase();
     const existingUser: UserType[] = await checkExistingUser(email);
     if (existingUser) {
       //password verification
