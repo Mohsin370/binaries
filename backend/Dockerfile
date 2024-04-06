@@ -19,4 +19,6 @@ WORKDIR /backend/src
 
 EXPOSE 5000
 
+# CMD ["npm","run" , "migrate"]
+
 CMD ["npm","run" , "build"]
