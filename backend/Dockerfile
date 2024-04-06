@@ -1,14 +1,22 @@
-FROM node:20-alpine
+FROM node:lts-alpine
 
 WORKDIR /backend
 
-COPY  package.json .
+COPY  package*.json .
 
 RUN npm install 
 
+RUN npm install -g sequelize-cli 
 
 COPY . .
 
-EXPOSE 3000
+WORKDIR /backend/src
 
-CMD ["npm","start"]
+# RUN npx sequelize db:migrate
+# RUN npx sequelize db:seed:all 
+
+
+
+EXPOSE 5000
+
+CMD ["npm","run" , "build"]

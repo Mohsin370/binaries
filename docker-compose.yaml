@@ -32,6 +32,7 @@ services:
       - ./backend:/app/backend
   pg-database:
     image: postgres
+    container_name: pg_database
     ports:
       - '5432:5432'
     networks:
